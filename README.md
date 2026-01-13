@@ -453,11 +453,31 @@ Render allows you to deploy both client and server as a single web service.
 
 #### Step 1: Prepare MongoDB Atlas
 
-1. Create a MongoDB Atlas account at https://www.mongodb.com/cloud/atlas
-2. Create a new cluster (free tier M0)
-3. Create a database user
-4. Whitelist IP addresses (or use `0.0.0.0/0` for Render)
-5. Get your connection string (replace `<password>` with your password)
+1. **Create a MongoDB Atlas account** at https://www.mongodb.com/cloud/atlas
+2. **Create a new cluster** (free tier M0)
+3. **Create a database user**:
+   - Go to "Database Access" → "Add New Database User"
+   - Choose "Password" authentication
+   - Username: your choice (e.g., `gigflow_user`)
+   - Password: generate a strong password (save it!)
+   - Database User Privileges: "Read and write to any database"
+   - Click "Add User"
+4. **Whitelist IP addresses** (CRITICAL for Render):
+   - Go to "Network Access" → "IP Access List"
+   - Click "Add IP Address"
+   - Choose one of these options:
+     - **Option A (Recommended for Render)**: Click "Allow Access from Anywhere"
+       - This adds `0.0.0.0/0` which allows all IPs (safe for Render)
+     - **Option B**: Add specific Render IPs (not recommended, changes frequently)
+   - Click "Confirm"
+5. **Get your connection string**:
+   - Go to "Database" → Click "Connect" on your cluster
+   - Choose "Connect your application"
+   - Driver: "Node.js", Version: "5.5 or later"
+   - Copy the connection string
+   - Replace `<password>` with your database user password
+   - Replace `<dbname>` with your database name (e.g., `gigflow`)
+   - Example: `mongodb+srv://gigflow_user:yourpassword@cluster0.xxxxx.mongodb.net/gigflow?retryWrites=true&w=majority`
 
 #### Step 2: Deploy to Render
 
