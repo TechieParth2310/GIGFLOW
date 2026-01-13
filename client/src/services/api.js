@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-// In production, use same origin (server serves both client and API)
-// In development, use environment variable or default
+// In production, use relative path (server serves both client and API)
+// In development, use environment variable or default to localhost
 const API_URL = import.meta.env.PROD
-  ? `${window.location.origin}/api`
+  ? '/api'
   : (import.meta.env.VITE_API_URL || 'http://localhost:5001/api');
 
 const api = axios.create({

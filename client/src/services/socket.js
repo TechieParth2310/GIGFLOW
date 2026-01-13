@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 
-// In production, use same origin (server serves both client and socket)
-// In development, use environment variable or default
+// In production, use relative path (server serves both client and socket)
+// In development, use environment variable or default to localhost
 const SOCKET_URL = import.meta.env.PROD
   ? window.location.origin
   : (import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001');
