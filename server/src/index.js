@@ -12,6 +12,7 @@ import gigRoutes from './routes/gigRoutes.js';
 import bidRoutes from './routes/bidRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import seedRoutes from './routes/seedRoutes.js';
 
 // ES module dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -71,6 +72,7 @@ app.use('/api/gigs', gigRoutes);
 app.use('/api/bids', bidRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/seed', seedRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

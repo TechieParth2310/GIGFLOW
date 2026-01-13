@@ -1,22 +1,36 @@
 # How to Seed Production Database on Render
 
-## Option 1: Using Render Shell (Easiest)
+## Option 1: Using Seed API Endpoint (Easiest - Works on Free Tier!)
 
-1. **Go to Render Dashboard**:
-   - Open your GIGFLOW service on Render
-   - Click **"Shell"** in the left sidebar (under MANAGE section)
+Since Render free tier doesn't support Shell, use the seed API endpoint:
 
-2. **Run the seed script**:
+1. **Get your seed secret key** (default: `seed-me-production-2026`)
+   - Or set a custom `SEED_SECRET_KEY` in Render environment variables
+
+2. **Call the seed endpoint**:
    ```bash
-   cd server && npm run seed
+   curl -X POST "https://gigflow-nq1v.onrender.com/api/seed?key=seed-me-production-2026"
    ```
    
-   This will:
-   - Connect to your production MongoDB Atlas database
-   - Create sample users, gigs, and bids
-   - Fill your database with demo data
+   Or use your browser/postman:
+   ```
+   POST https://gigflow-nq1v.onrender.com/api/seed?key=seed-me-production-2026
+   ```
 
-3. **Refresh your website**:
+3. **You should see**:
+   ```json
+   {
+     "success": true,
+     "message": "Database seeded successfully!",
+     "data": {
+       "users": 3,
+       "gigs": 10,
+       "bids": 0
+     }
+   }
+   ```
+
+4. **Refresh your website**:
    - Go to `https://gigflow-nq1v.onrender.com/gigs`
    - You should now see all the sample gigs!
 
@@ -40,6 +54,8 @@
 4. **Delete the temporary `.env` file** (or revert changes)
 
 ⚠️ **Warning**: Make sure you're using the production URI, not your local one!
+
+**⚠️ Security Note**: Change the default seed key by setting `SEED_SECRET_KEY` environment variable in Render for better security.
 
 ## Option 3: Create Gigs Manually
 
