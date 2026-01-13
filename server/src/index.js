@@ -75,9 +75,9 @@ app.use('/api/bids', bidRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/users', userRoutes);
 
-// Health check
+// Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ success: true, message: 'Server is running' });
+  res.status(200).json({ ok: true });
 });
 
 // Serve static files from React app in production
