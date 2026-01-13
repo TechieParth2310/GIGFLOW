@@ -1,6 +1,10 @@
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+// In production, use same origin (server serves both client and socket)
+// In development, use environment variable or default
+const SOCKET_URL = import.meta.env.PROD
+  ? window.location.origin
+  : (import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001');
 
 let socket = null;
 

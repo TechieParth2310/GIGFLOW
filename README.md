@@ -443,29 +443,94 @@ GIGFLOW/
 
 ## 🚢 Deployment
 
-### Server Deployment
+### Deploy to Render (Recommended - Single Service)
+
+Render allows you to deploy both client and server as a single web service.
+
+#### Prerequisites
+- MongoDB Atlas account (free tier available)
+- Render account (free tier available)
+
+#### Step 1: Prepare MongoDB Atlas
+
+1. Create a MongoDB Atlas account at https://www.mongodb.com/cloud/atlas
+2. Create a new cluster (free tier M0)
+3. Create a database user
+4. Whitelist IP addresses (or use `0.0.0.0/0` for Render)
+5. Get your connection string (replace `<password>` with your password)
+
+#### Step 2: Deploy to Render
+
+1. **Create New Web Service** on Render
+   - Connect your GitHub repository: `https://github.com/TechieParth2310/GIGFLOW`
+   - Select the repository
+
+2. **Configure Build Settings**:
+   - **Build Command**: 
+     ```bash
+     npm install && cd server && npm install && cd ../client && npm install && npm run build
+     ```
+   - **Start Command**: 
+     ```bash
+     cd server && npm start
+     ```
+   - **Environment**: Node
+
+3. **Set Environment Variables**:
+   ```
+   NODE_ENV=production
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/gigflow?retryWrites=true&w=majority
+   JWT_SECRET=your-super-secret-jwt-key-min-32-characters
+   PORT=10000
+   CORS_ORIGIN=https://your-app-name.onrender.com
+   ```
+
+4. **Deploy**: Click "Create Web Service"
+
+#### Step 3: Update Client Environment (if needed)
+
+The server automatically serves the built client files in production. However, if you need to update the client's API URL:
+
+1. Update `client/.env` or set `VITE_API_URL` in Render environment variables
+2. The client will use the same domain as the server in production
+
+#### Render Deployment Notes
+
+- **Free Tier**: Services may spin down after 15 minutes of inactivity
+- **Build Time**: First build may take 5-10 minutes
+- **Auto-Deploy**: Render automatically deploys on git push to main branch
+- **Custom Domain**: You can add a custom domain in Render settings
+- **Logs**: View deployment and runtime logs in Render dashboard
+
+### Alternative: Separate Deployments
+
+#### Server Deployment (Render, Heroku, Railway, etc.)
 
 1. Set production environment variables
-2. Use PM2 for process management:
+2. Use PM2 for process management (if needed):
    ```bash
    npm install -g pm2
    pm2 start server/src/index.js --name gigflow-server
    ```
 
-### Client Deployment
+#### Client Deployment (Vercel, Netlify, etc.)
 
-1. Update `client/.env` with production API URL
+1. Update `client/.env` with production API URL:
+   ```
+   VITE_API_URL=https://your-server-url.com/api
+   VITE_SOCKET_URL=https://your-server-url.com
+   ```
 2. Build the application:
    ```bash
    cd client && npm run build
    ```
-3. Deploy `client/dist` to static hosting (Vercel, Netlify, etc.)
+3. Deploy `client/dist` to static hosting
 
 ### MongoDB
 
 - Use MongoDB Atlas for cloud hosting
 - Ensure connection string includes authentication
-- Whitelist server IP addresses
+- Whitelist server IP addresses (or use `0.0.0.0/0` for Render)
 
 ## 🔒 Security Features
 

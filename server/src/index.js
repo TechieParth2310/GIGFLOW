@@ -4,12 +4,18 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/database.js';
 import authRoutes from './routes/authRoutes.js';
 import gigRoutes from './routes/gigRoutes.js';
 import bidRoutes from './routes/bidRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+
+// ES module dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load env vars
 dotenv.config();
@@ -20,10 +26,15 @@ connectDB();
 const app = express();
 const httpServer = createServer(app);
 
+// Trust proxy (required for Render)
+app.set('trust proxy', 1);
+
 // Socket.io setup
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    origin: process.env.NODE_ENV === 'production' 
+      ? process.env.CORS_ORIGIN || '*' 
+      : process.env.CORS_ORIGIN || 'http://localhost:5173',
     credentials: true
   }
 });
@@ -48,7 +59,9 @@ io.on('connection', (socket) => {
 
 // Middleware
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: process.env.NODE_ENV === 'production'
+    ? process.env.CORS_ORIGIN || '*'
+    : process.env.CORS_ORIGIN || 'http://localhost:5173',
   credentials: true
 }));
 app.use(express.json());
@@ -66,6 +79,22 @@ app.use('/api/users', userRoutes);
 app.get('/api/health', (req, res) => {
   res.status(200).json({ success: true, message: 'Server is running' });
 });
+
+// Serve static files from React app in production
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from client/dist
+  const clientDistPath = path.join(__dirname, '../../client/dist');
+  app.use(express.static(clientDistPath));
+
+  // Fallback to index.html for non-API routes (React Router)
+  app.get('*', (req, res) => {
+    // Don't serve index.html for API routes
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ success: false, message: 'API route not found' });
+    }
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
