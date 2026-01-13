@@ -504,6 +504,14 @@ Render allows you to deploy both client and server as a single web service.
    PORT=10000
    CORS_ORIGIN=https://your-app-name.onrender.com
    ```
+   
+   **⚠️ CRITICAL - MongoDB Atlas IP Whitelist:**
+   - **Before deploying**, make sure MongoDB Atlas allows connections from Render
+   - Go to MongoDB Atlas → **Network Access** → **IP Access List**
+   - Click **"Add IP Address"** → **"Allow Access from Anywhere"**
+   - This adds `0.0.0.0/0` which allows all IPs (safe for Render)
+   - Without this, you'll get: `"Could not connect... IP isn't whitelisted"` error
+   - See `MONGODB_ATLAS_SETUP.md` for detailed troubleshooting guide
 
 4. **Deploy**: Click "Create Web Service"
 
