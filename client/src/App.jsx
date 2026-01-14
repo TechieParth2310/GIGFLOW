@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTheme } from './store/slices/themeSlice';
@@ -6,6 +6,7 @@ import { getMe } from './store/slices/authSlice';
 import { initSocket, disconnectSocket } from './services/socket';
 import { addNotification } from './store/slices/notificationSlice';
 import Navbar from './components/Navbar';
+import OnboardingModal from './components/OnboardingModal';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -28,6 +29,7 @@ function App() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { theme } = useSelector((state) => state.theme);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     dispatch(getMe());
@@ -127,9 +129,36 @@ function App() {
     }
   }, [theme, dispatch]);
 
+  // Show onboarding modal: first 3 times, then every 5th reload
+  useEffect(() => {
+    const onboardingCount = parseInt(localStorage.getItem('onboardingCount') || '0', 10);
+    
+    // Show modal if:
+    // 1. First 3 visits (count < 3)
+    // 2. After that, every 5th reload (count >= 3 and (count - 3) % 5 === 0)
+    const shouldShow = onboardingCount < 3 || (onboardingCount >= 3 && (onboardingCount - 3) % 5 === 0);
+    
+    if (shouldShow) {
+      // Show after 3 seconds
+      const timer = setTimeout(() => {
+        setShowOnboarding(true);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleCloseOnboarding = () => {
+    setShowOnboarding(false);
+    // Increment count in localStorage
+    const currentCount = parseInt(localStorage.getItem('onboardingCount') || '0', 10);
+    localStorage.setItem('onboardingCount', (currentCount + 1).toString());
+  };
+
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'dark' : ''} bg-gradient-page`} style={{ color: 'var(--color-text-primary)' }}>
       <Navbar />
+      {showOnboarding && <OnboardingModal onClose={handleCloseOnboarding} />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route
