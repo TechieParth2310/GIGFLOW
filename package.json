@@ -1,7 +1,7 @@
 {
   "name": "gigflow",
   "version": "1.0.0",
-  "description": "Production-grade mini freelance marketplace",
+  "description": "Freelance marketplace platform",
   "private": true,
   "scripts": {
     "install:all": "npm install && cd server && npm install && cd ../client && npm install",

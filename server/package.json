@@ -8,7 +8,6 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "seed": "node src/scripts/seedData.js",
-    "verify-password": "node src/scripts/verifyPassword.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -27,7 +26,6 @@
     "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
-    "nodemailer": "^7.0.12",
     "socket.io": "^4.6.1"
   },
   "devDependencies": {

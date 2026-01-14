@@ -9,7 +9,7 @@ A full-stack freelance marketplace application built with modern web technologie
 
 ## 🎯 Project Overview
 
-GigFlow is a production-ready freelance marketplace that enables:
+GigFlow is a freelance marketplace that enables:
 - **Clients** to post gigs and hire freelancers
 - **Freelancers** to browse opportunities and submit bids
 - **Real-time notifications** for hiring and bidding events
@@ -142,24 +142,6 @@ JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 JWT_EXPIRE=7d
 NODE_ENV=development
 CORS_ORIGIN=http://localhost:5173
-FRONTEND_URL=http://localhost:5173
-
-# Email Configuration (for password reset)
-# Option 1: Gmail (Recommended for development)
-EMAIL_SERVICE=gmail
-EMAIL_USER=your-email@gmail.com
-EMAIL_APP_PASSWORD=your-gmail-app-password
-
-# Option 2: Custom SMTP
-# EMAIL_SERVICE=custom
-# SMTP_HOST=smtp.example.com
-# SMTP_PORT=587
-# SMTP_SECURE=false
-# EMAIL_USER=your-email@example.com
-# EMAIL_PASSWORD=your-email-password
-
-# Email sender name (optional)
-EMAIL_FROM=GigFlow <noreply@gigflow.com>
 ```
 
 #### Client Configuration
@@ -238,29 +220,6 @@ Cookie: token=<jwt_token>
 ```http
 POST /api/auth/logout
 Cookie: token=<jwt_token>
-```
-
-#### Forgot Password
-```http
-POST /api/auth/forgot-password
-Content-Type: application/json
-
-{
-  "email": "user@example.com"
-}
-```
-
-**Response**: Password reset link sent to email (or returned in development mode)
-
-#### Reset Password
-```http
-POST /api/auth/reset-password
-Content-Type: application/json
-
-{
-  "token": "reset_token_from_email",
-  "password": "newPassword123"
-}
 ```
 
 ### Gig Endpoints
@@ -552,7 +511,7 @@ Render allows you to deploy both client and server as a single web service.
    - Click **"Add IP Address"** → **"Allow Access from Anywhere"**
    - This adds `0.0.0.0/0` which allows all IPs (safe for Render)
    - Without this, you'll get: `"Could not connect... IP isn't whitelisted"` error
-   - See `MONGODB_ATLAS_SETUP.md` for detailed troubleshooting guide
+   - Make sure MongoDB Atlas IP whitelist includes `0.0.0.0/0` for Render
 
 4. **Deploy**: Click "Create Web Service"
 
