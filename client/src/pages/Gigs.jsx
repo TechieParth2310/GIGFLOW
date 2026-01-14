@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { fetchGigs } from '../store/slices/gigSlice';
 import { GigCardSkeleton } from '../components/Skeleton';
 import { EmptyGigs, EmptySearchResults } from '../components/EmptyState';
@@ -20,14 +20,60 @@ const cardGradients = [
 const Gigs = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { gigs, loading, error, pagination } = useSelector((state) => state.gigs);
-  const [search, setSearch] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  
+  // Initialize state from URL params (only on mount)
+  const [search, setSearch] = useState(searchParams.get('search') || '');
+  const [minBudget, setMinBudget] = useState(searchParams.get('minBudget') || '');
+  const [maxBudget, setMaxBudget] = useState(searchParams.get('maxBudget') || '');
+  const [sort, setSort] = useState(searchParams.get('sort') || 'newest');
+  const [status, setStatus] = useState(searchParams.get('status') || 'open');
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page')) || 1);
   const limit = 10;
 
+  // Update URL params when filters change
+  const updateURLParams = (updates) => {
+    const newParams = new URLSearchParams();
+    // Preserve existing params and apply updates
+    searchParams.forEach((value, key) => {
+      if (!updates.hasOwnProperty(key)) {
+        newParams.set(key, value);
+      }
+    });
+    Object.keys(updates).forEach(key => {
+      if (updates[key] === '' || updates[key] === null || updates[key] === undefined) {
+        newParams.delete(key);
+      } else {
+        newParams.set(key, updates[key]);
+      }
+    });
+    setSearchParams(newParams, { replace: true });
+  };
+
+  // Fetch gigs when filters or page change
   useEffect(() => {
-    dispatch(fetchGigs({ search: '', page: currentPage, limit }));
-  }, [dispatch, currentPage]);
+    const filters = {
+      search: search || '',
+      minBudget: minBudget || '',
+      maxBudget: maxBudget || '',
+      sort: sort || 'newest',
+      status: status || 'open',
+      page: currentPage,
+      limit
+    };
+    dispatch(fetchGigs(filters));
+    
+    // Update URL params
+    const newParams = new URLSearchParams();
+    if (search) newParams.set('search', search);
+    if (minBudget) newParams.set('minBudget', minBudget);
+    if (maxBudget) newParams.set('maxBudget', maxBudget);
+    if (sort && sort !== 'newest') newParams.set('sort', sort);
+    if (status && status !== 'open') newParams.set('status', status);
+    if (currentPage > 1) newParams.set('page', currentPage.toString());
+    setSearchParams(newParams, { replace: true });
+  }, [dispatch, currentPage, search, minBudget, maxBudget, sort, status]);
 
   useEffect(() => {
     if (error) {
@@ -38,20 +84,35 @@ const Gigs = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     setCurrentPage(1);
-    dispatch(fetchGigs({ search, page: 1, limit }));
+  };
+
+  const handleFilterChange = () => {
+    setCurrentPage(1);
+    // Filters will update via useEffect
+  };
+
+  const handleResetFilters = () => {
+    setSearch('');
+    setMinBudget('');
+    setMaxBudget('');
+    setSort('newest');
+    setStatus('open');
+    setCurrentPage(1);
+    setSearchParams({}, { replace: true });
   };
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    dispatch(fetchGigs({ search, page: newPage, limit }));
   };
 
   const handleClearSearch = () => {
     setSearch('');
     setCurrentPage(1);
-    dispatch(fetchGigs({ search: '', page: 1, limit }));
   };
+
+  // Check if any filters are active
+  const hasActiveFilters = search || minBudget || maxBudget || sort !== 'newest' || status !== 'open';
 
   return (
     <div className="min-h-screen bg-gradient-page relative overflow-hidden page-enter" style={{ color: 'var(--color-text-primary)' }}>
@@ -96,6 +157,91 @@ const Gigs = () => {
           </form>
         </div>
 
+        {/* Filter Bar */}
+        <div className="premium-card p-6 mb-8">
+          <div className="flex flex-wrap items-end gap-4">
+            {/* Budget Range */}
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                Budget Range
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={minBudget}
+                  onChange={(e) => {
+                    setMinBudget(e.target.value);
+                    handleFilterChange();
+                  }}
+                  className="premium-input flex-1"
+                  min="0"
+                />
+                <span className="self-center" style={{ color: 'var(--color-text-secondary)' }}>to</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={maxBudget}
+                  onChange={(e) => {
+                    setMaxBudget(e.target.value);
+                    handleFilterChange();
+                  }}
+                  className="premium-input flex-1"
+                  min="0"
+                />
+              </div>
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="min-w-[180px]">
+              <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                Sort By
+              </label>
+              <select
+                value={sort}
+                onChange={(e) => {
+                  setSort(e.target.value);
+                  handleFilterChange();
+                }}
+                className="premium-input w-full"
+              >
+                <option value="newest">Newest First</option>
+                <option value="budget_desc">Budget: High → Low</option>
+                <option value="budget_asc">Budget: Low → High</option>
+              </select>
+            </div>
+
+            {/* Status Filter */}
+            <div className="min-w-[140px]">
+              <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                Status
+              </label>
+              <select
+                value={status}
+                onChange={(e) => {
+                  setStatus(e.target.value);
+                  handleFilterChange();
+                }}
+                className="premium-input w-full"
+              >
+                <option value="open">Open Only</option>
+                <option value="all">All Statuses</option>
+              </select>
+            </div>
+
+            {/* Reset Filters Button */}
+            {hasActiveFilters && (
+              <button
+                onClick={handleResetFilters}
+                className="premium-button-secondary px-4 py-2.5"
+                type="button"
+              >
+                Reset Filters
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Loading State */}
         {loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -128,7 +274,7 @@ const Gigs = () => {
         {!loading && !error && (
           <>
             {gigs.length === 0 ? (
-              search ? (
+              search || hasActiveFilters ? (
                 <EmptySearchResults searchTerm={search} onClear={handleClearSearch} />
               ) : (
                 <EmptyGigs onAction={() => navigate('/create-gig')} />
@@ -161,19 +307,39 @@ const Gigs = () => {
                         
                         {/* Card Body - Flex Grow */}
                         <div className="p-6 flex-grow flex flex-col">
-                          {/* Status Badge */}
+                          {/* Status Badge and Hot/Trending Badges */}
                           <div className="flex justify-between items-start mb-4 flex-shrink-0">
-                            <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-                              gig.status === 'open' 
-                                ? 'badge-pending' 
-                                : ''
-                            }`} style={gig.status !== 'open' ? {
-                              backgroundColor: 'var(--color-surface)',
-                              color: 'var(--color-text-secondary)',
-                              border: '1px solid var(--color-border)'
-                            } : {}}>
-                              {gig.status === 'open' ? 'Open' : 'Assigned'}
-                            </span>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
+                                gig.status === 'open' 
+                                  ? 'badge-pending' 
+                                  : ''
+                              }`} style={gig.status !== 'open' ? {
+                                backgroundColor: 'var(--color-surface)',
+                                color: 'var(--color-text-secondary)',
+                                border: '1px solid var(--color-border)'
+                              } : {}}>
+                                {gig.status === 'open' ? 'Open' : 'Assigned'}
+                              </span>
+                              {/* Hot Badge */}
+                              {gig.viewCount > 50 && (
+                                <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{
+                                  backgroundColor: '#FEE2E2',
+                                  color: '#DC2626'
+                                }}>
+                                  🔥 Hot
+                                </span>
+                              )}
+                              {/* Trending Badge */}
+                              {gig.bidCount > 10 && (
+                                <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{
+                                  backgroundColor: '#FEF3C7',
+                                  color: '#D97706'
+                                }}>
+                                  📈 Trending
+                                </span>
+                              )}
+                            </div>
                             <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${gradientClass} opacity-0 group-hover:opacity-60 transition-all duration-300`}></div>
                           </div>
 
@@ -181,6 +347,23 @@ const Gigs = () => {
                           <h3 className="text-xl font-bold mb-3 line-clamp-2 transition-all duration-300 group-hover:text-brand flex-shrink-0" style={{ color: 'var(--color-text-primary)' }}>
                             {gig.title}
                           </h3>
+
+                          {/* Views and Bids Count */}
+                          <div className="flex items-center gap-4 mb-3 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                            <span className="flex items-center gap-1">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                              {gig.viewCount || 0} views
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                              {gig.bidCount || 0} proposals
+                            </span>
+                          </div>
 
                           {/* Description */}
                           <p className="mb-4 line-clamp-3 text-sm leading-relaxed transition-colors flex-grow" style={{ color: 'var(--color-text-secondary)' }}>

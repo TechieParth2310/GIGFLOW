@@ -8,6 +8,8 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Gigs from './pages/Gigs';
 import GigDetails from './pages/GigDetails';
 import CreateGig from './pages/CreateGig';
@@ -126,6 +128,14 @@ function App() {
         <Route
           path="/register"
           element={!isAuthenticated ? <Register /> : <Navigate to="/gigs" replace />}
+        />
+        <Route
+          path="/forgot-password"
+          element={!isAuthenticated ? <ForgotPassword /> : <Navigate to="/gigs" replace />}
+        />
+        <Route
+          path="/reset-password"
+          element={!isAuthenticated ? <ResetPassword /> : <Navigate to="/gigs" replace />}
         />
         <Route path="/gigs" element={<Gigs />} />
         <Route path="/gigs/:id" element={<GigDetails />} />

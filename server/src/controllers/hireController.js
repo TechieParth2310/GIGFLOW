@@ -67,24 +67,29 @@ export const hireFreelancer = async (req, res) => {
       });
     }
 
-    // GUARDED UPDATE: Only delete if gig status is still "open"
-    // This is the race condition killer - MongoDB will only delete
+    // GUARDED UPDATE: Only update if gig status is still "open"
+    // This is the race condition killer - MongoDB will only update
     // if the document matches ALL conditions, including status: "open"
-    const deletedGig = await Gig.findOneAndDelete(
+    const updatedGig = await Gig.findOneAndUpdate(
       {
         _id: gig._id,
-        status: 'open',  // GUARD: Only delete if still open
+        status: 'open',  // GUARD: Only update if still open
         ownerId: req.user._id  // Additional guard: verify ownership
       },
-      { session }
+      { status: 'assigned' },
+      { 
+        session,
+        new: true,
+        runValidators: true
+      }
     );
 
-    // If delete returned null, gig was already deleted/assigned (race condition detected)
-    if (!deletedGig) {
+    // If update returned null, gig was already assigned (race condition detected)
+    if (!updatedGig) {
       await session.abortTransaction();
       return res.status(400).json({
         success: false,
-        message: 'Gig is already deleted/assigned or you are not the owner'
+        message: 'Gig is already assigned or you are not the owner'
       });
     }
 
@@ -127,17 +132,17 @@ export const hireFreelancer = async (req, res) => {
     await session.commitTransaction();
 
     // Get updated bid with populated fields (outside transaction)
-    // Note: gigId may be null if gig was deleted, so we use the deleted gig data
     const populatedBid = await Bid.findById(bidId)
-      .populate('freelancerId', 'username email');
+      .populate('freelancerId', 'username email')
+      .populate('gigId', 'title');
 
     // Create persistent notification (outside transaction)
-    if (populatedBid.freelancerId) {
+    if (populatedBid.freelancerId && populatedBid.gigId) {
       await Notification.create({
         userId: populatedBid.freelancerId._id,
-        message: `You have been hired for "${deletedGig.title}"!`,
+        message: `You have been hired for "${populatedBid.gigId.title}"!`,
         type: 'hired',
-        gigId: deletedGig._id,
+        gigId: updatedGig._id,
         bidId: populatedBid._id,
         read: false
       });
@@ -145,12 +150,12 @@ export const hireFreelancer = async (req, res) => {
 
     // Emit socket event (outside transaction)
     const io = req.app.get('io');
-    if (io && populatedBid.freelancerId) {
+    if (io && populatedBid.freelancerId && populatedBid.gigId) {
       io.to(populatedBid.freelancerId._id.toString()).emit('hired', {
-        message: `You have been hired for "${deletedGig.title}"!`,
+        message: `You have been hired for "${populatedBid.gigId.title}"!`,
         bidId: populatedBid._id,
-        gigId: deletedGig._id,
-        gigTitle: deletedGig.title
+        gigId: updatedGig._id,
+        gigTitle: populatedBid.gigId.title
       });
     }
 

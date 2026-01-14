@@ -8,6 +8,7 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "seed": "node src/scripts/seedData.js",
+    "verify-password": "node src/scripts/verifyPassword.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["freelance", "marketplace"],

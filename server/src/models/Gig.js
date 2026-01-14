@@ -28,6 +28,14 @@ const gigSchema = new mongoose.Schema({
     enum: ['open', 'assigned'],
     default: 'open'
   },
+  viewCount: {
+    type: Number,
+    default: 0
+  },
+  bidCount: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now

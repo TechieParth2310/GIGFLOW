@@ -3,9 +3,9 @@ import { gigsAPI } from '../../services/api';
 
 export const fetchGigs = createAsyncThunk(
   'gigs/fetchGigs',
-  async ({ search = '', page = 1, limit = 10 }, { rejectWithValue }) => {
+  async (filters = {}, { rejectWithValue }) => {
     try {
-      const response = await gigsAPI.getGigs(search, page, limit);
+      const response = await gigsAPI.getGigs(filters);
       return response.data;
     } catch (error) {
       const errorMessage = error.response?.data?.message || 

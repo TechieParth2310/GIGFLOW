@@ -111,8 +111,106 @@ const MyGigs = () => {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {myGigs.map((gig) => (
+          <>
+            {/* Separate into Hired and Open Gigs */}
+            {(() => {
+              const hiredGigs = myGigs.filter(gig => gig.status === 'assigned');
+              const openGigs = myGigs.filter(gig => gig.status === 'open');
+              
+              return (
+                <>
+                  {/* Hired Gigs Section */}
+                  {hiredGigs.length > 0 && (
+                    <div className="mb-12">
+                      <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+                        ✅ Hired Gigs ({hiredGigs.length})
+                      </h2>
+                      <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+                        Gigs where you've hired a freelancer
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {hiredGigs.map((gig) => (
+                          <div
+                            key={gig._id}
+                            className="premium-card overflow-hidden group cursor-pointer h-full flex flex-col card-hover"
+                          >
+                            {/* Status Badge Header */}
+                            <div className="h-2 bg-gradient-to-r from-green-400 to-emerald-400"></div>
+                            
+                            <div className="p-6 flex-grow">
+                              <div className="flex justify-between items-start mb-4">
+                                <span className="px-3 py-1.5 rounded-full text-xs font-semibold badge-success">
+                                  Hired
+                                </span>
+                              </div>
+
+                              <h3 className="text-xl font-bold mb-3 line-clamp-2 transition-all duration-300 group-hover:text-brand" style={{ color: 'var(--color-text-primary)' }}>
+                                {gig.title}
+                              </h3>
+
+                              <p className="mb-4 line-clamp-3 text-sm leading-relaxed transition-colors" style={{ color: 'var(--color-text-secondary)' }}>
+                                {gig.description}
+                              </p>
+
+                              {gig.createdAt && (
+                                <p className="text-xs mb-4" style={{ color: 'var(--color-text-muted)' }}>
+                                  Posted {formatDate(gig.createdAt)}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="card-footer flex items-center justify-between border-t pt-3 mt-4 px-6 pb-6" style={{ borderColor: 'var(--color-border)' }}>
+                              <div>
+                                <p className="text-xs mb-1 font-medium" style={{ color: 'var(--color-text-muted)' }}>Budget</p>
+                                <span className="text-2xl font-bold" style={{ color: 'var(--color-brand)' }}>
+                                  ${gig.budget.toLocaleString()}
+                                </span>
+                              </div>
+                              <div className="flex gap-2">
+                                <Link
+                                  to={`/gigs/${gig._id}/review`}
+                                  className="premium-button text-sm px-4 py-2"
+                                >
+                                  View Result
+                                </Link>
+                                <button
+                                  onClick={() => handleDeleteClick(gig)}
+                                  className="premium-button-secondary text-sm px-4 py-2"
+                                  style={{ 
+                                    backgroundColor: 'var(--color-error-tint)',
+                                    borderColor: 'var(--color-error)',
+                                    color: 'var(--color-error)'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.target.style.backgroundColor = 'var(--color-error)';
+                                    e.target.style.color = 'white';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.target.style.backgroundColor = 'var(--color-error-tint)';
+                                    e.target.style.color = 'var(--color-error)';
+                                  }}
+                                >
+                                  🗑️ Delete
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Open Gigs Section */}
+                  {openGigs.length > 0 && (
+                    <div>
+                      <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+                        🔓 Open Gigs ({openGigs.length})
+                      </h2>
+                      <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+                        Gigs that are still accepting applications
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {openGigs.map((gig) => (
               <div
                 key={gig._id}
                 className="premium-card overflow-hidden group cursor-pointer h-full flex flex-col card-hover"
@@ -199,8 +297,14 @@ const MyGigs = () => {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </>
         )}
       </div>
 

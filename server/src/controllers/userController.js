@@ -2,6 +2,58 @@ import User from '../models/User.js';
 import Bid from '../models/Bid.js';
 import Gig from '../models/Gig.js';
 
+// @desc    Verify a user's password (development/testing utility)
+// @route   POST /api/users/verify-password
+// @access  Protected by secret key
+export const verifyPassword = async (req, res) => {
+  try {
+    const secretKey = req.query.key || req.body.key;
+    const { email, password } = req.body;
+
+    // Check secret key (same as seed endpoint)
+    if (secretKey !== 'seed-me-production-2026') {
+      return res.status(403).json({
+        success: false,
+        message: 'Unauthorized: Invalid secret key'
+      });
+    }
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required'
+      });
+    }
+
+    const user = await User.findOne({ email }).select('+password');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: `User with email "${email}" not found`
+      });
+    }
+
+    const isMatch = await user.matchPassword(password);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        email: user.email,
+        username: user.username,
+        userId: user._id,
+        passwordMatch: isMatch,
+        message: isMatch ? 'Password is CORRECT ✅' : 'Password is INCORRECT ❌'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Server error'
+    });
+  }
+};
+
 // @desc    Get user profile by ID
 // @route   GET /api/users/:userId
 // @access  Private

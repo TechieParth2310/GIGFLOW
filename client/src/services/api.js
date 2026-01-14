@@ -48,19 +48,27 @@ export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
   logout: () => api.post('/auth/logout'),
-  getMe: () => api.get('/auth/me')
+  getMe: () => api.get('/auth/me'),
+  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
+  resetPassword: (data) => api.post('/auth/reset-password', data)
 };
 
 // Gigs API
 export const gigsAPI = {
-  getGigs: (search = '', page = 1, limit = 10) => {
+  getGigs: (filters = {}) => {
+    const { search = '', minBudget = '', maxBudget = '', sort = 'newest', status = 'open', page = 1, limit = 10 } = filters;
     const params = new URLSearchParams();
     if (search) params.append('search', search);
+    if (minBudget) params.append('minBudget', minBudget);
+    if (maxBudget) params.append('maxBudget', maxBudget);
+    if (sort) params.append('sort', sort);
+    if (status) params.append('status', status);
     params.append('page', page);
     params.append('limit', limit);
     return api.get(`/gigs?${params.toString()}`);
   },
   getGig: (id) => api.get(`/gigs/${id}`),
+  trackView: (gigId) => api.post(`/gigs/${gigId}/view`),
   getMyGigs: () => api.get('/gigs/mine'),
   createGig: (data) => api.post('/gigs', data),
   deleteGig: (id) => api.delete(`/gigs/${id}`)

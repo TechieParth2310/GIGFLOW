@@ -52,8 +52,93 @@ const MyBids = () => {
         ) : myBids.length === 0 ? (
           <EmptyBids onAction={() => window.location.href = '/gigs'} />
         ) : (
-          <div className="space-y-4">
-            {myBids.map((bid) => (
+          <>
+            {(() => {
+              const hiredBids = myBids.filter(bid => bid.status === 'hired');
+              const otherBids = myBids.filter(bid => bid.status !== 'hired');
+              
+              return (
+                <>
+                  {/* Hired Bids Section - Show prominently at top */}
+                  {hiredBids.length > 0 && (
+                    <div className="mb-12">
+                      <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+                        🎉 Hired Projects ({hiredBids.length})
+                      </h2>
+                      <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+                        Congratulations! You've been hired for these projects
+                      </p>
+                      <div className="space-y-4">
+                        {hiredBids.map((bid) => (
+                          <div
+                            key={bid._id}
+                            className="premium-card p-6 card-hover badge-success border-2"
+                          >
+                            <div className="flex justify-between items-start mb-4">
+                              <div className="flex-1">
+                                <Link
+                                  to={`/gigs/${bid.gigId?._id || bid.gigId}`}
+                                  className="text-2xl font-bold mb-2 block transition-colors"
+                                  style={{ color: 'var(--color-text-primary)' }}
+                                  onMouseEnter={(e) => e.target.style.color = 'var(--color-brand)'}
+                                  onMouseLeave={(e) => e.target.style.color = 'var(--color-text-primary)'}
+                                >
+                                  {bid.gigId?.title || 'Gig'}
+                                </Link>
+                                {bid.createdAt && (
+                                  <p className="text-sm mb-2" style={{ color: 'var(--color-text-muted)' }}>
+                                    Bid submitted {formatDate(bid.createdAt)}
+                                  </p>
+                                )}
+                                <div className="flex items-center gap-3 mb-2">
+                                  <span className="px-3 py-1 rounded-full text-xs font-semibold border badge-success">
+                                    Hired
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-xs mb-1 font-medium" style={{ color: 'var(--color-text-muted)' }}>Your Price</p>
+                                <span className="text-3xl font-bold" style={{ color: 'var(--color-brand)' }}>
+                                  ${bid.price.toLocaleString()}
+                                </span>
+                              </div>
+                            </div>
+                            <p className="mb-4 leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>{bid.message}</p>
+                            <div className="mt-4 p-4 badge-success rounded-lg border-2">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="font-bold text-lg mb-1" style={{ color: 'var(--color-brand-deep)' }}>
+                                    🎉 Congratulations! You've been hired!
+                                  </p>
+                                  <p className="text-sm" style={{ color: 'var(--color-text-primary)' }}>
+                                    The client has accepted your bid for this project.
+                                  </p>
+                                </div>
+                                <Link
+                                  to={`/gigs/${bid.gigId?._id || bid.gigId}`}
+                                  className="premium-button text-sm px-4 py-2"
+                                >
+                                  View Gig
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Other Bids Section */}
+                  {otherBids.length > 0 && (
+                    <div>
+                      <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+                        All Bids ({otherBids.length})
+                      </h2>
+                      <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+                        Your other submitted bids
+                      </p>
+                      <div className="space-y-4">
+                        {otherBids.map((bid) => (
               <div
                 key={bid._id}
                 className={`premium-card p-6 card-hover ${
@@ -131,8 +216,14 @@ const MyBids = () => {
                       </div>
                     )}
               </div>
-            ))}
-          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </>
         )}
       </div>
     </div>

@@ -93,9 +93,20 @@ const Login = () => {
 
             {/* Password Input */}
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
-                Password
-              </label>
+              <div className="flex justify-between items-center mb-2">
+                <label htmlFor="password" className="block text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                  Password
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-medium transition-colors"
+                  style={{ color: 'var(--color-brand)' }}
+                  onMouseEnter={(e) => e.target.style.color = 'var(--color-brand-deep)'}
+                  onMouseLeave={(e) => e.target.style.color = 'var(--color-brand)'}
+                >
+                  Forgot?
+                </Link>
+              </div>
               <input
                 id="password"
                 name="password"
@@ -129,8 +140,19 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Sign Up Link */}
-          <div className="text-center pt-4 border-t" style={{ borderColor: 'var(--color-border)' }}>
+          {/* Sign Up Link and Forgot Password Link */}
+          <div className="text-center pt-4 border-t space-y-3" style={{ borderColor: 'var(--color-border)' }}>
+            <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              <Link 
+                to="/forgot-password" 
+                className="font-semibold transition-colors inline-block"
+                style={{ color: 'var(--color-brand)' }}
+                onMouseEnter={(e) => e.target.style.color = 'var(--color-brand-deep)'}
+                onMouseLeave={(e) => e.target.style.color = 'var(--color-brand)'}
+              >
+                Forgot Password?
+              </Link>
+            </p>
             <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
               Don't have an account?{' '}
               <Link 
