@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import User from '../models/User.js';
 import { generateToken } from '../utils/generateToken.js';
 import { sendPasswordResetEmail } from '../utils/emailService.js';
-import { sendPasswordResetEmail } from '../utils/emailService.js';
 
 // @desc    Register user
 // @route   POST /api/auth/register
