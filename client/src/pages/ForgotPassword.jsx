@@ -15,16 +15,20 @@ const ForgotPassword = () => {
     try {
       const response = await authAPI.forgotPassword(email);
       if (response.data.success) {
+        // Check if email service is configured (development fallback)
         if (response.data.resetUrl) {
+          // Development mode - email not configured
           setResetData({
             resetUrl: response.data.resetUrl,
             resetToken: response.data.resetToken
           });
           toast.success('Password reset link generated!');
         } else {
-          // Email doesn't exist (security: don't reveal)
-          toast.success('If that email exists, a password reset link has been sent.');
-          setResetData({ message: 'Check your email for the reset link (or try with a registered email address)' });
+          // Production mode - email sent
+          toast.success('Password reset link has been sent to your email!');
+          setResetData({ 
+            message: 'Please check your email inbox (and spam folder) for the password reset link. The link will expire in 10 minutes.' 
+          });
         }
       }
     } catch (error) {
@@ -80,7 +84,7 @@ const ForgotPassword = () => {
                       </a>
                     </div>
                     <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
-                      ⚠️ Note: Email service not implemented. Link is shown here for testing.
+                      ⚠️ Note: Email service not configured. Link is shown here for development/testing.
                     </p>
                   </>
                 ) : (
@@ -89,10 +93,10 @@ const ForgotPassword = () => {
                       Request Submitted
                     </p>
                     <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-                      {resetData.message || 'If that email exists, a password reset link would be sent. (Email service not implemented)'}
+                      {resetData.message || 'If that email exists, a password reset link has been sent to your email.'}
                     </p>
                     <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
-                      💡 Tip: Make sure you're using a registered email address.
+                      💡 Tip: Check your spam folder if you don't see the email. The link expires in 10 minutes.
                     </p>
                   </>
                 )}

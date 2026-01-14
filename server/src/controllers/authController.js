@@ -1,6 +1,8 @@
 import crypto from 'crypto';
 import User from '../models/User.js';
 import { generateToken } from '../utils/generateToken.js';
+import { sendPasswordResetEmail } from '../utils/emailService.js';
+import { sendPasswordResetEmail } from '../utils/emailService.js';
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -220,20 +222,35 @@ export const forgotPassword = async (req, res) => {
       resetPasswordExpire: resetTokenExpire
     });
 
-    // Return reset token in response (for development/testing)
-    // In production, you would send email with reset link containing resetToken
-    // For development, construct the frontend URL
-    const frontendUrl = process.env.NODE_ENV === 'production' 
-      ? (process.env.FRONTEND_URL || req.protocol + '://' + req.get('host'))
-      : (process.env.FRONTEND_URL || 'http://localhost:5174');
-    const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
-    
-    res.status(200).json({
-      success: true,
-      message: 'Password reset token generated',
-      resetToken: resetToken, // Return token for development
-      resetUrl: resetUrl // Return full URL for easy testing
-    });
+    // Send email with reset link
+    try {
+      await sendPasswordResetEmail(user.email, resetToken);
+      
+      res.status(200).json({
+        success: true,
+        message: 'Password reset link has been sent to your email'
+      });
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      
+      // In development, still return the token if email fails
+      if (process.env.NODE_ENV === 'development') {
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
+        return res.status(200).json({
+          success: true,
+          message: 'Email service not configured. Use this link for development:',
+          resetToken: resetToken,
+          resetUrl: resetUrl
+        });
+      }
+      
+      // In production, don't expose the error
+      res.status(200).json({
+        success: true,
+        message: 'If that email exists, a password reset link has been sent to your email'
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
