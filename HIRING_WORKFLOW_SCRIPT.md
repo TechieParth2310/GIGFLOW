@@ -178,7 +178,9 @@
 - **Pause briefly** after each action to let viewers see what's happening
 - **Highlight** the toast notifications and confirmation modals
 - **Use your cursor** to point at important UI elements
-- **Keep it under 2 minutes** - you can speed up scrolling/loading parts
+- **Keep it around 3-4 minutes** - you can speed up form filling by copy-pasting the sample data
+- **Have both accounts ready** - switching between tabs should be quick
+- **Pre-fill forms** if possible (use browser autofill or have text ready to paste)
 - **Practice once** before recording to ensure smooth flow
 
 ---
