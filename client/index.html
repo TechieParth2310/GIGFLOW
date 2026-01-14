@@ -5,6 +5,33 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GigFlow - Freelance Marketplace</title>
+    <script>
+      // FORCE dark mode immediately - before anything else loads
+      (function() {
+        // Always add dark class first
+        document.documentElement.classList.add('dark');
+        
+        // Then check localStorage - if user previously chose light, respect it
+        // But on FIRST VISIT (no saved preference), default to dark
+        const saved = localStorage.getItem('theme');
+        if (saved === 'light') {
+          document.documentElement.classList.remove('dark');
+        } else {
+          // No saved preference OR saved as dark = use dark mode
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('theme', 'dark'); // Save it
+        }
+      })();
+    </script>
+    <style>
+      /* Prevent flash of light mode */
+      html:not(.dark) {
+        background-color: #0B0D10 !important;
+      }
+      html.dark {
+        background-color: #0B0D10 !important;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

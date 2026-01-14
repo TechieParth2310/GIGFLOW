@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { setTheme } from './store/slices/themeSlice';
 import { getMe } from './store/slices/authSlice';
 import { initSocket, disconnectSocket } from './services/socket';
 import { addNotification } from './store/slices/notificationSlice';
@@ -107,14 +108,24 @@ function App() {
     }
   }, [isAuthenticated, location.pathname, navigate, user]);
 
-  // Apply theme class to document
+  // Apply theme class to document - FORCE dark mode as default
   useEffect(() => {
-    if (theme === 'dark') {
+    // If no theme saved or theme is dark, FORCE dark mode
+    const savedTheme = localStorage.getItem('theme');
+    const shouldBeDark = !savedTheme || theme === 'dark' || savedTheme === 'dark';
+    
+    if (shouldBeDark) {
       document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+      if (theme !== 'dark') {
+        // Sync Redux state if it's out of sync
+        dispatch(setTheme('dark'));
+      }
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
     }
-  }, [theme]);
+  }, [theme, dispatch]);
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'dark' : ''} bg-gradient-page`} style={{ color: 'var(--color-text-primary)' }}>

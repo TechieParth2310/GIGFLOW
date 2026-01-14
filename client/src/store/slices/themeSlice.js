@@ -1,19 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// Load theme from localStorage
+// Load theme from localStorage - FORCE dark mode as default
 const getInitialTheme = () => {
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem('theme');
-    const theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    // Apply theme class immediately
+    // FORCE dark mode if no saved preference OR if saved is not explicitly 'light'
+    const theme = (saved === 'light') ? 'light' : 'dark';
+    
+    // Apply theme class immediately and aggressively
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
     }
+    
+    // If no saved preference, save dark as default
+    if (!saved) {
+      localStorage.setItem('theme', 'dark');
+    }
+    
     return theme;
   }
-  return 'light';
+  return 'dark'; // Default to dark
 };
 
 const themeSlice = createSlice({
@@ -26,6 +36,7 @@ const themeSlice = createSlice({
       state.mode = state.mode === 'light' ? 'dark' : 'light';
       if (typeof window !== 'undefined') {
         localStorage.setItem('theme', state.mode);
+        // Apply theme class immediately
         if (state.mode === 'dark') {
           document.documentElement.classList.add('dark');
         } else {

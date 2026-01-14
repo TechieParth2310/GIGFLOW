@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { register, clearError } from '../store/slices/authSlice';
 import toast from 'react-hot-toast';
 
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
@@ -17,13 +18,14 @@ const Register = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
+      const redirectUrl = searchParams.get('redirect') || '/gigs';
       toast.success('Account created successfully!');
-      navigate('/gigs');
+      navigate(redirectUrl, { replace: true });
     }
     return () => {
       dispatch(clearError());
     };
-  }, [isAuthenticated, navigate, dispatch]);
+  }, [isAuthenticated, navigate, dispatch, searchParams]);
 
   useEffect(() => {
     if (error) {

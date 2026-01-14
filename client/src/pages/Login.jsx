@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation, useSearchParams } from 'react-router-dom';
 import { login, clearError } from '../store/slices/authSlice';
 import toast from 'react-hot-toast';
 
@@ -8,6 +8,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
@@ -17,14 +18,14 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      const from = location.state?.from?.pathname || '/gigs';
+      const redirectUrl = searchParams.get('redirect') || location.state?.from?.pathname || '/gigs';
       toast.success('Welcome back!');
-      navigate(from, { replace: true });
+      navigate(redirectUrl, { replace: true });
     }
     return () => {
       dispatch(clearError());
     };
-  }, [isAuthenticated, navigate, dispatch, location]);
+  }, [isAuthenticated, navigate, dispatch, location, searchParams]);
 
   useEffect(() => {
     if (error) {

@@ -5,6 +5,7 @@ import { fetchGigs } from '../store/slices/gigSlice';
 import { GigCardSkeleton } from '../components/Skeleton';
 import { EmptyGigs, EmptySearchResults } from '../components/EmptyState';
 import { formatDate } from '../utils/dateUtils';
+import { initScrollAnimations, getStaggerDelay } from '../utils/animations';
 import toast from 'react-hot-toast';
 
 // Card gradient colors array - Orange + Ivory theme
@@ -81,6 +82,16 @@ const Gigs = () => {
     }
   }, [error]);
 
+  // Initialize scroll animations when gigs change
+  useEffect(() => {
+    if (gigs.length > 0) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        initScrollAnimations();
+      }, 100);
+    }
+  }, [gigs]);
+
   const handleSearch = (e) => {
     e.preventDefault();
     setCurrentPage(1);
@@ -124,11 +135,11 @@ const Gigs = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         {/* Header Section */}
-        <div className="mb-10 text-center">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+        <div className="mb-10 text-center animate-fadeInDown">
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-4 animate-textReveal" style={{ color: 'var(--color-text-primary)' }}>
             Browse Gigs
           </h1>
-          <p className="text-xl font-medium mb-8" style={{ color: 'var(--color-text-secondary)' }}>Discover amazing opportunities from clients worldwide</p>
+          <p className="text-xl font-medium mb-8 animate-fadeIn stagger-1" style={{ color: 'var(--color-text-secondary)' }}>Discover amazing opportunities from clients worldwide</p>
           
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="mt-6 max-w-2xl mx-auto">
@@ -158,7 +169,7 @@ const Gigs = () => {
         </div>
 
         {/* Filter Bar */}
-        <div className="premium-card p-6 mb-8">
+        <div className="premium-card p-6 mb-8 animate-fadeInUp stagger-2">
           <div className="flex flex-wrap items-end gap-4">
             {/* Budget Range */}
             <div className="flex-1 min-w-[200px]">
