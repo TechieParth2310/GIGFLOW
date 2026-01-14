@@ -28,33 +28,33 @@ const Home = () => {
           </div>
           
           {/* Subtitle with Fade In */}
-          <p className="mt-6 max-w-2xl mx-auto text-xl sm:text-2xl font-medium subtitle-entrance" style={{ color: 'var(--color-text-secondary)' }}>
+          <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-base sm:text-xl md:text-2xl font-medium subtitle-entrance px-4" style={{ color: 'var(--color-text-secondary)' }}>
             Connect with talented freelancers or find your next project.
           </p>
-          <p className="mt-3 max-w-2xl mx-auto text-lg subtitle-entrance" style={{ color: 'var(--color-text-muted)', animationDelay: '0.8s' }}>
+          <p className="mt-2 sm:mt-3 max-w-2xl mx-auto text-sm sm:text-lg subtitle-entrance px-4" style={{ color: 'var(--color-text-muted)', animationDelay: '0.8s' }}>
             The premium marketplace where opportunities meet talent.
           </p>
 
           {/* CTA Buttons - No Animations */}
-          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="mt-6 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
             <Link
               to="/gigs"
-              className="premium-button px-8 py-4 text-lg button-hover-mad"
+              className="premium-button w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg button-hover-mad text-center"
             >
               Browse Gigs
             </Link>
             {!isAuthenticated && (
               <Link
                 to="/register"
-                className="premium-button-secondary px-8 py-4 text-lg button-hover-mad"
+                className="premium-button-secondary w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg button-hover-mad text-center"
               >
                 Get Started Free
               </Link>
             )}
           </div>
 
-          {/* Features Grid with Stagger Animation */}
-          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {/* Features Grid with Stagger Animation */}
+                  <div className="mt-12 sm:mt-16 md:mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 px-4">
             <div className="premium-card p-8 card-hover group animate-fadeInUp scroll-animate" style={{ animationDelay: '1.6s', opacity: 0 }}>
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:shadow-md transition-shadow duration-500" style={{ backgroundColor: 'var(--color-brand-tint)' }}>
                 <svg className="w-8 h-8" style={{ color: 'var(--color-brand)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">

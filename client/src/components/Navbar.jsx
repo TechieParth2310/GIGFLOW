@@ -1,5 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
 import { logout } from '../store/slices/authSlice';
 import { clearNotifications } from '../store/slices/notificationSlice';
 import { toggleTheme } from '../store/slices/themeSlice';
@@ -15,6 +16,7 @@ const Navbar = () => {
   const { notifications } = useSelector((state) => state.notifications);
   const { mode } = useSelector((state) => state.theme);
   const { mode: userMode } = useSelector((state) => state.mode); // Client or Freelancer mode
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -46,14 +48,15 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link 
               to="/" 
-              className="text-2xl font-bold transition-colors"
+              className="text-xl sm:text-2xl font-bold transition-colors"
               style={{ color: 'var(--color-text-primary)' }}
               onMouseEnter={(e) => e.target.style.color = getHoverColor()}
               onMouseLeave={(e) => e.target.style.color = 'var(--color-text-primary)'}
             >
               GigFlow
             </Link>
-            <div className="ml-10 flex items-center space-x-1">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex ml-6 lg:ml-10 items-center space-x-1">
               {isAuthenticated ? (
                 <>
                   {/* Mode Toggle */}
@@ -198,8 +201,25 @@ const Navbar = () => {
                 </Link>
               )}
             </div>
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden ml-4 p-2 rounded-lg"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              {mobileMenuOpen ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
           </div>
-          <div className="flex items-center space-x-3">
+          {/* Desktop Right Side */}
+          <div className="hidden md:flex items-center space-x-3">
             {/* Dark Mode Toggle */}
             <button
               onClick={() => dispatch(toggleTheme())}
@@ -291,7 +311,171 @@ const Navbar = () => {
               </>
             )}
           </div>
+          {/* Mobile Right Side */}
+          <div className="md:hidden flex items-center space-x-2">
+            <button
+              onClick={() => dispatch(toggleTheme())}
+              className="p-2 rounded-lg"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
+              {mode === 'dark' ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
+            {!isAuthenticated && (
+              <Link
+                to="/login"
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                Login
+              </Link>
+            )}
+          </div>
         </div>
+        
+        {/* Mobile Menu Dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t" style={{ borderColor: 'var(--color-border)' }}>
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              {isAuthenticated ? (
+                <>
+                  {/* Mode Toggle */}
+                  <button
+                    onClick={() => dispatch(toggleMode())}
+                    className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold border"
+                    style={{ 
+                      backgroundColor: userMode === 'client' ? 'var(--color-brand-tint)' : 'var(--color-surface)',
+                      borderColor: userMode === 'client' ? 'var(--color-brand)' : 'var(--color-border)',
+                      color: userMode === 'client' ? 'var(--color-brand)' : 'var(--color-text-secondary)'
+                    }}
+                  >
+                    {userMode === 'client' ? '👔 Client Mode' : '💼 Freelancer Mode'}
+                  </button>
+                  
+                  {/* Client Mode Navigation */}
+                  {userMode === 'client' ? (
+                    <>
+                      <Link
+                        to="/create-gig"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`block px-3 py-2 rounded-lg text-sm font-medium ${
+                          isActive('/create-gig') ? 'font-semibold' : ''
+                        }`}
+                        style={{ 
+                          color: isActive('/create-gig') ? 'var(--color-brand)' : 'var(--color-text-secondary)',
+                          backgroundColor: isActive('/create-gig') ? 'var(--color-brand-tint)' : 'transparent'
+                        }}
+                      >
+                        Post Gig
+                      </Link>
+                      <Link
+                        to="/my-gigs"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`block px-3 py-2 rounded-lg text-sm font-medium ${
+                          isActive('/my-gigs') ? 'font-semibold' : ''
+                        }`}
+                        style={{ 
+                          color: isActive('/my-gigs') ? 'var(--color-brand)' : 'var(--color-text-secondary)',
+                          backgroundColor: isActive('/my-gigs') ? 'var(--color-brand-tint)' : 'transparent'
+                        }}
+                      >
+                        My Gigs
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        to="/gigs"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`block px-3 py-2 rounded-lg text-sm font-medium ${
+                          isActive('/gigs') ? 'font-semibold' : ''
+                        }`}
+                        style={{ 
+                          color: isActive('/gigs') ? 'var(--color-brand)' : 'var(--color-text-secondary)',
+                          backgroundColor: isActive('/gigs') ? 'var(--color-brand-tint)' : 'transparent'
+                        }}
+                      >
+                        Browse Gigs
+                      </Link>
+                      <Link
+                        to="/my-bids"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`block px-3 py-2 rounded-lg text-sm font-medium ${
+                          isActive('/my-bids') ? 'font-semibold' : ''
+                        }`}
+                        style={{ 
+                          color: isActive('/my-bids') ? 'var(--color-brand)' : 'var(--color-text-secondary)',
+                          backgroundColor: isActive('/my-bids') ? 'var(--color-brand-tint)' : 'transparent'
+                        }}
+                      >
+                        My Bids
+                      </Link>
+                    </>
+                  )}
+                  
+                  <Link
+                    to="/notifications"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`block px-3 py-2 rounded-lg text-sm font-medium relative ${
+                      isActive('/notifications') ? 'font-semibold' : ''
+                    }`}
+                    style={{ 
+                      color: isActive('/notifications') ? 'var(--color-brand)' : 'var(--color-text-secondary)',
+                      backgroundColor: isActive('/notifications') ? 'var(--color-brand-tint)' : 'transparent'
+                    }}
+                  >
+                    Notifications
+                    {unreadCount > 0 && (
+                      <span className="ml-2 text-xs font-bold rounded-full px-1.5 py-0.5 text-white" style={{ backgroundColor: 'var(--color-brand)' }}>
+                        {unreadCount}
+                      </span>
+                    )}
+                  </Link>
+                  
+                  <Link
+                    to="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-3 py-2 rounded-lg text-sm font-medium"
+                    style={{ color: 'var(--color-text-secondary)' }}
+                  >
+                    Profile
+                  </Link>
+                  
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold border"
+                    style={{ 
+                      backgroundColor: 'var(--color-surface)',
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text-primary)'
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/gigs"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-lg text-sm font-medium"
+                  style={{ color: 'var(--color-text-secondary)' }}
+                >
+                  Browse Gigs
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

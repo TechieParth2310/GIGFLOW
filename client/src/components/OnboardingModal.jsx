@@ -17,7 +17,7 @@ const OnboardingModal = ({ onClose }) => {
       style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}
     >
       <div
-        className="max-w-2xl w-full p-8 relative"
+        className="max-w-2xl w-full p-4 sm:p-6 md:p-8 relative max-h-[90vh] overflow-y-auto"
         style={{
           backgroundColor: "var(--color-surface)",
           border: isDarkMode ? "2px solid #CCFF00" : "2px solid #38BDF8",
@@ -53,15 +53,15 @@ const OnboardingModal = ({ onClose }) => {
         </button>
 
         {/* Header */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-4 sm:mb-6">
           <h2
-            className="text-3xl font-bold mb-2"
+            className="text-2xl sm:text-3xl font-bold mb-2"
             style={{ color: "var(--color-text-primary)" }}
           >
             Welcome to GigFlow! 🚀
           </h2>
           <p
-            className="text-lg"
+            className="text-base sm:text-lg"
             style={{ color: "var(--color-text-secondary)" }}
           >
             Your premium freelance marketplace
@@ -91,7 +91,7 @@ const OnboardingModal = ({ onClose }) => {
             >
               <span>🔄</span> Two Modes, One Platform
             </h3>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
               {/* Client Mode */}
               <div
                 className="p-4 rounded-lg"
@@ -158,7 +158,7 @@ const OnboardingModal = ({ onClose }) => {
             >
               ✨ Key Features
             </h3>
-            <div className="grid md:grid-cols-2 gap-3">
+            <div className="grid sm:grid-cols-2 gap-2 sm:gap-3">
               <div
                 className="flex items-start gap-3 p-3 rounded-lg"
                 style={{
@@ -279,7 +279,7 @@ const OnboardingModal = ({ onClose }) => {
           </div>
 
           {/* CTA */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4">
             <button
               onClick={handleGetStarted}
               className="flex-1"

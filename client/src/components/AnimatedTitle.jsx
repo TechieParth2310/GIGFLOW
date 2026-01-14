@@ -27,9 +27,9 @@ const AnimatedTitle = () => {
 
   return (
     <h1 
-      className="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-6 relative inline-block"
+      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-4 sm:mb-6 relative inline-block"
       style={{ 
-        minHeight: '120px',
+        minHeight: 'auto',
         lineHeight: '1.2'
       }}
     >

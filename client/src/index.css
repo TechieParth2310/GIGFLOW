@@ -2,6 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile Responsive Fixes */
+@media (max-width: 640px) {
+  /* Disable heavy animations on mobile for better performance */
+  .animate-blob,
+  .animate-fadeIn,
+  .animate-fadeInUp,
+  .animate-fadeInDown,
+  .animate-scaleIn,
+  .animate-textReveal,
+  .letter-animate {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  
+  /* Reduce blur effects on mobile */
+  .backdrop-blur-xl {
+    backdrop-filter: blur(8px);
+  }
+  
+  /* Ensure text is readable */
+  body {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
