@@ -133,25 +133,33 @@ cd ../client && npm install
 
 #### Server Configuration
 
-Create `server/.env`:
+1. Copy the example environment file:
+   ```bash
+   cp server/.env.example server/.env
+   ```
 
-```env
-PORT=5001
-MONGODB_URI=mongodb://localhost:27017/gigflow
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-JWT_EXPIRE=7d
-NODE_ENV=development
-CORS_ORIGIN=http://localhost:5173
-```
+2. Edit `server/.env` and fill in your actual values:
+   ```env
+   PORT=5001
+   MONGODB_URI=mongodb://localhost:27017/gigflow
+   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+   JWT_EXPIRE=7d
+   NODE_ENV=development
+   CORS_ORIGIN=http://localhost:5173
+   ```
 
 #### Client Configuration
 
-Create `client/.env`:
+1. Copy the example environment file:
+   ```bash
+   cp client/.env.example client/.env
+   ```
 
-```env
-VITE_API_URL=http://localhost:5001/api
-VITE_SOCKET_URL=http://localhost:5001
-```
+2. Edit `client/.env` and fill in your actual values:
+   ```env
+   VITE_API_URL=http://localhost:5001/api
+   VITE_SOCKET_URL=http://localhost:5001
+   ```
 
 ### 4. Start MongoDB
 

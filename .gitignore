@@ -12,6 +12,11 @@ client/node_modules/
 server/.env
 client/.env
 
+# Keep .env.example files (they contain no secrets)
+!.env.example
+!server/.env.example
+!client/.env.example
+
 # Build outputs
 client/dist/
 client/build/
