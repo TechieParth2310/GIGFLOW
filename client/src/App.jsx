@@ -147,14 +147,14 @@ function App() {
     }
   }, [theme, dispatch]);
 
-  // Show onboarding modal every time site is opened (after 3 seconds) - ONLY if not logged in
+  // Show onboarding modal every time site is opened (after 6 seconds) - ONLY if not logged in
   useEffect(() => {
     // Only show if user is NOT authenticated
     if (!isAuthenticated) {
-      // Show after 3 seconds on every page load
+      // Show after 6 seconds on every page load (so user can see homepage first)
       const timer = setTimeout(() => {
         setShowOnboarding(true);
-      }, 3000);
+      }, 6000);
 
       return () => clearTimeout(timer);
     }

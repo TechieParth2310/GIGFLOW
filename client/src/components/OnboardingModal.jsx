@@ -1,8 +1,15 @@
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const OnboardingModal = ({ onClose }) => {
   const { mode: theme } = useSelector((state) => state.theme);
   const isDarkMode = theme === "dark";
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    onClose();
+    navigate("/login");
+  };
 
   return (
     <div
@@ -274,7 +281,7 @@ const OnboardingModal = ({ onClose }) => {
           {/* CTA */}
           <div className="flex gap-3 pt-4">
             <button
-              onClick={onClose}
+              onClick={handleGetStarted}
               className="flex-1"
               style={{
                 padding: "0.75rem 1.5rem",
