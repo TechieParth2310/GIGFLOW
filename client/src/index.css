@@ -180,6 +180,11 @@ code {
   animation: buttonGlow 2s ease-in-out infinite;
 }
 
+/* Light mode - premium button hover with blue glow */
+:not(.dark) .premium-button:hover {
+  box-shadow: var(--shadow-button), 0 0 30px rgba(56, 189, 248, 0.4) !important; /* Blue glow for light mode */
+}
+
 .premium-button:active {
   transform: scale(0.95);
 }
@@ -882,7 +887,7 @@ body,
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(249, 115, 22, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, transparent 70%); /* Blue for light mode */
   transform: translate(-50%, -50%);
   transition: width 0.6s ease, height 0.6s ease;
   z-index: -1;
@@ -897,9 +902,9 @@ body,
 .button-hover-mad:hover {
   transform: translateY(-4px) scale(1.05) !important;
   box-shadow: 
-    0 20px 40px -10px rgba(249, 115, 22, 0.4),
-    0 0 30px rgba(249, 115, 22, 0.3),
-    0 0 60px rgba(249, 115, 22, 0.2) !important;
+    0 20px 40px -10px rgba(56, 189, 248, 0.4),
+    0 0 30px rgba(56, 189, 248, 0.3),
+    0 0 60px rgba(56, 189, 248, 0.2) !important; /* Blue glow for light mode */
   animation: buttonPulse 1.5s ease-in-out infinite;
 }
 
@@ -916,10 +921,10 @@ body,
 
 .premium-button-secondary.button-hover-mad:hover {
   transform: translateY(-4px) scale(1.05) !important;
-  border-color: var(--color-brand) !important;
+  border-color: #38BDF8 !important; /* Blue border for light mode */
   box-shadow: 
-    0 20px 40px -10px rgba(249, 115, 22, 0.3),
-    0 0 20px rgba(249, 115, 22, 0.2) !important;
+    0 20px 40px -10px rgba(56, 189, 248, 0.3),
+    0 0 20px rgba(56, 189, 248, 0.2) !important; /* Blue glow for light mode */
 }
 
 .dark .premium-button-secondary.button-hover-mad:hover {

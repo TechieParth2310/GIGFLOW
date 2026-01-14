@@ -30,6 +30,11 @@ const Navbar = () => {
 
   const unreadCount = notifications.filter(n => !n.read).length;
   const isActive = (path) => location.pathname === path;
+  
+  // Get hover color based on theme mode
+  const getHoverColor = () => {
+    return mode === 'dark' ? '#CCFF00' : '#38BDF8'; // Neon for dark, blue for light
+  };
 
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-xl shadow-md border-b" style={{ 
@@ -43,7 +48,7 @@ const Navbar = () => {
               to="/" 
               className="text-2xl font-bold transition-colors"
               style={{ color: 'var(--color-text-primary)' }}
-              onMouseEnter={(e) => e.target.style.color = 'var(--color-brand)'}
+              onMouseEnter={(e) => e.target.style.color = getHoverColor()}
               onMouseLeave={(e) => e.target.style.color = 'var(--color-text-primary)'}
             >
               GigFlow
@@ -78,7 +83,7 @@ const Navbar = () => {
                         style={{ 
                           color: isActive('/create-gig') ? 'var(--color-brand)' : 'var(--color-text-secondary)' 
                         }}
-                        onMouseEnter={(e) => !isActive('/create-gig') && (e.target.style.color = 'var(--color-brand)')}
+                        onMouseEnter={(e) => !isActive('/create-gig') && (e.target.style.color = getHoverColor())}
                         onMouseLeave={(e) => isActive('/create-gig') && (e.target.style.color = isActive('/create-gig') ? 'var(--color-brand)' : 'var(--color-text-secondary)')}
                       >
                         Post Gig
@@ -96,7 +101,7 @@ const Navbar = () => {
                         style={{ 
                           color: isActive('/my-gigs') ? 'var(--color-brand)' : 'var(--color-text-secondary)' 
                         }}
-                        onMouseEnter={(e) => !isActive('/my-gigs') && (e.target.style.color = 'var(--color-brand)')}
+                        onMouseEnter={(e) => !isActive('/my-gigs') && (e.target.style.color = getHoverColor())}
                         onMouseLeave={(e) => isActive('/my-gigs') && (e.target.style.color = isActive('/my-gigs') ? 'var(--color-brand)' : 'var(--color-text-secondary)')}
                       >
                         My Gigs
@@ -118,7 +123,7 @@ const Navbar = () => {
                         style={{ 
                           color: isActive('/gigs') ? 'var(--color-brand)' : 'var(--color-text-secondary)' 
                         }}
-                        onMouseEnter={(e) => !isActive('/gigs') && (e.target.style.color = 'var(--color-brand)')}
+                        onMouseEnter={(e) => !isActive('/gigs') && (e.target.style.color = getHoverColor())}
                         onMouseLeave={(e) => isActive('/gigs') && (e.target.style.color = isActive('/gigs') ? 'var(--color-brand)' : 'var(--color-text-secondary)')}
                       >
                         Browse Gigs
@@ -136,7 +141,7 @@ const Navbar = () => {
                         style={{ 
                           color: isActive('/my-bids') ? 'var(--color-brand)' : 'var(--color-text-secondary)' 
                         }}
-                        onMouseEnter={(e) => !isActive('/my-bids') && (e.target.style.color = 'var(--color-brand)')}
+                        onMouseEnter={(e) => !isActive('/my-bids') && (e.target.style.color = getHoverColor())}
                         onMouseLeave={(e) => isActive('/my-bids') && (e.target.style.color = isActive('/my-bids') ? 'var(--color-brand)' : 'var(--color-text-secondary)')}
                       >
                         My Bids
@@ -158,7 +163,7 @@ const Navbar = () => {
                     style={{ 
                       color: isActive('/notifications') ? 'var(--color-brand)' : 'var(--color-text-secondary)' 
                     }}
-                    onMouseEnter={(e) => !isActive('/notifications') && (e.target.style.color = 'var(--color-brand)')}
+                    onMouseEnter={(e) => !isActive('/notifications') && (e.target.style.color = getHoverColor())}
                     onMouseLeave={(e) => isActive('/notifications') && (e.target.style.color = isActive('/notifications') ? 'var(--color-brand)' : 'var(--color-text-secondary)')}
                   >
                     Notifications
@@ -183,7 +188,7 @@ const Navbar = () => {
                   style={{ 
                     color: isActive('/gigs') ? 'var(--color-brand)' : 'var(--color-text-secondary)' 
                   }}
-                  onMouseEnter={(e) => !isActive('/gigs') && (e.target.style.color = 'var(--color-brand)')}
+                  onMouseEnter={(e) => !isActive('/gigs') && (e.target.style.color = getHoverColor())}
                   onMouseLeave={(e) => isActive('/gigs') && (e.target.style.color = isActive('/gigs') ? 'var(--color-brand)' : 'var(--color-text-secondary)')}
                 >
                   Browse Gigs
@@ -272,7 +277,7 @@ const Navbar = () => {
                   to="/login"
                   className="px-4 py-2 font-semibold rounded-lg text-sm transition-all"
                   style={{ color: 'var(--color-text-secondary)' }}
-                  onMouseEnter={(e) => e.target.style.color = 'var(--color-brand)'}
+                  onMouseEnter={(e) => e.target.style.color = getHoverColor()}
                   onMouseLeave={(e) => e.target.style.color = 'var(--color-text-secondary)'}
                 >
                   Login
